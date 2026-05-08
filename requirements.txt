@@ -17,3 +17,4 @@ spacy
 boto3
 pydantic
 sqlalchemy
+python-multipart
