@@ -18,3 +18,5 @@ boto3
 pydantic
 sqlalchemy
 python-multipart
+requests
+pandas

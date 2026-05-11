@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+
+  # FastAPI backend
+  api:
+    build: .
+    container_name: finsight-api
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    volumes:
+      - ./data:/app/data
+      - ./vectorstore:/app/vectorstore
+      - ./logs:/app/logs
+    command: python -m uvicorn api.main:app --host 0.0.0.0 --port 8000
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Streamlit frontend
+  frontend:
+    build: .
+    container_name: finsight-frontend
+    ports:
+      - "8501:8501"
+    env_file:
+      - .env
+    depends_on:
+      - api
+    command: python -m streamlit run app.py --server.port 8501 --server.headless true
+    environment:
+      - API_BASE=http://api:8000
